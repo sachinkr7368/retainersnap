@@ -3,7 +3,7 @@ import { fieldErrorsFrom } from "../src/lib/action-state";
 import { isApiFailure, isApiSuccess, publicMessage } from "../src/lib/api-result";
 import { buildContentSecurityPolicy } from "../src/lib/csp";
 import { previewShots } from "../src/lib/fixtures/catalog";
-import { previewEnabled } from "../src/lib/preview";
+import { isPreviewPath, previewEnabled } from "../src/lib/preview";
 import { resolvePlan } from "../src/lib/plans";
 import { buildSummary } from "../src/lib/summary";
 import { isPrivateHost, parsePublicUrl, registrableDomain } from "../src/lib/urls";
@@ -71,6 +71,9 @@ assert.match(summary, /client\.framer\.app/);
 assert.match(summary, /99\.5%/);
 
 assert.equal(previewEnabled(), false);
+assert.equal(isPreviewPath("/preview"), true);
+assert.equal(isPreviewPath("/preview/billing"), true);
+assert.equal(isPreviewPath("/pricing"), false);
 assert.equal(previewShots.length >= 10, true);
 assert.equal(loginSchema.safeParse({ email: "ada@example.com", password: "short" }).success, false);
 const loginError = loginSchema.safeParse({ email: "not-an-email", password: "x" });
