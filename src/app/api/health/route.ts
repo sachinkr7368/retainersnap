@@ -7,6 +7,7 @@ import { missingCoreEnv, readEnv } from "@/lib/env";
 import type { HealthResponse } from "@/lib/health-types";
 import { apiError, apiOk } from "@/lib/http";
 import { publicMessage } from "@/lib/api-result";
+import { userMessage } from "@/lib/user-message";
 import { consumeHealthQuota } from "@/lib/rate-limit";
 import { parsePublicUrl, registrableDomain } from "@/lib/urls";
 
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
   try {
     json = await request.json();
   } catch {
-    return apiError("invalid_json", "Send a JSON body with a url field.", 400);
+    return apiError("invalid_json", "Enter a public site URL.", 400);
   }
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
   if (missingCoreEnv().length > 0 || !env.pagespeedApiKey) {
     return apiError(
       "not_configured",
-      "The health check is not configured yet. Add the Supabase service role and PAGESPEED_API_KEY.",
+      "This check is not available right now. Try again later.",
       503,
     );
   }
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
       );
     }
   } catch (error) {
-    return apiError("rate_limit_unavailable", publicMessage(error, "Rate limit failed."), 503);
+    return apiError("rate_limit_unavailable", publicMessage(error, "The check could not be counted. Try again in a minute."), 503);
   }
 
   const canonical = target.toString();
@@ -66,14 +67,14 @@ export async function POST(request: Request) {
       ok: false,
       expiresAt: null,
       issuer: null,
-      error: publicMessage(error, "SSL lookup failed"),
+      error: publicMessage(error, "The certificate date could not be read."),
     })),
     runRdap(hostname).catch((error: unknown) => ({
       ok: false,
       expiresAt: null,
       registrar: null,
       domain: registrableDomain(hostname),
-      error: publicMessage(error, "RDAP lookup failed"),
+      error: publicMessage(error, "The domain date could not be read."),
     })),
     runPagespeed(canonical, env.pagespeedApiKey)
       .then((result) => ({ ok: true as const, ...result }))
@@ -86,7 +87,7 @@ export async function POST(request: Request) {
         lcpMs: null,
         inpMs: null,
         cls: null,
-        error: publicMessage(error, "PageSpeed failed"),
+        error: publicMessage(error, "PageSpeed could not score this site."),
       })),
   ]);
 
@@ -94,7 +95,10 @@ export async function POST(request: Request) {
     url: canonical,
     hostname,
     fetchedAt: new Date().toISOString(),
-    uptime,
+    uptime: {
+      ...uptime,
+      error: uptime.error ? userMessage(uptime.error, "The site did not respond.") : undefined,
+    },
     ssl,
     domain,
     pagespeed,

@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { buttonMoss } from "@/components/styles";
 import { readApi } from "@/lib/api-client";
+import { userMessage } from "@/lib/user-message";
 
 async function runSiteChecks(siteId: string) {
   const response = await fetch(`/api/sites/${siteId}/run`, { method: "POST" });
@@ -23,7 +24,7 @@ export function RunChecksButton({ siteId }: { siteId: string }) {
   const message = mutation.isSuccess
     ? `Finished ${mutation.data} queued checks.`
     : mutation.error instanceof Error
-      ? mutation.error.message
+      ? userMessage(mutation.error.message, "The checks did not finish. Try again.")
       : "";
 
   return (

@@ -18,6 +18,27 @@ async function open(page: Page, route: string) {
   await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible();
 }
 
+test("the site footer sits at the bottom of a short page", async ({ page }) => {
+  await page.goto("/health");
+  await expect(page.getByRole("heading", { name: "Site health report" })).toBeVisible();
+  const placed = await page.evaluate(() => {
+    const footer = document.querySelector("footer");
+    if (!footer) return null;
+    const rect = footer.getBoundingClientRect();
+    const footerBottom = Math.round(rect.bottom + window.scrollY);
+    return {
+      footerBottom,
+      documentHeight: document.documentElement.scrollHeight,
+      viewHeight: window.innerHeight,
+    };
+  });
+  expect(placed).not.toBeNull();
+  expect(Math.abs(placed!.footerBottom - placed!.documentHeight)).toBeLessThanOrEqual(2);
+  if (placed!.documentHeight <= placed!.viewHeight + 2) {
+    expect(placed!.footerBottom).toBeGreaterThanOrEqual(placed!.viewHeight - 2);
+  }
+});
+
 test("public pages do not overflow sideways", async ({ page }) => {
   for (const route of publicRoutes) {
     await open(page, route);

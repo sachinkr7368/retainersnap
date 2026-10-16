@@ -17,7 +17,7 @@ export default async function LoginPage({
     params.error === "callback"
       ? "That sign-in link could not be confirmed. Request a new one."
       : params.error === "workspace"
-        ? "This account has no workspace yet. Confirm the signup SQL trigger, then try again."
+        ? "This account is not attached to a studio yet. Sign up again, or use the invite link you were sent."
         : "";
 
   return (

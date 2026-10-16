@@ -47,7 +47,7 @@ export async function runRdap(hostname: string): Promise<DomainResult> {
       expiresAt: validDate,
       registrar: registrarName(json.entities ?? []),
       domain,
-      error: validDate ? undefined : "RDAP had no expiration date.",
+      error: validDate ? undefined : "The domain registry did not list an expiration date.",
     };
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Domain lookup failed");

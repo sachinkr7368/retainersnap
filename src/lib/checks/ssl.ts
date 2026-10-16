@@ -74,7 +74,7 @@ export async function runSsl(hostname: string): Promise<SslResult> {
       }
     }
     if (!best) {
-      return { ok: false, expiresAt: null, issuer: null, error: "No matching certificate in public logs." };
+      return { ok: false, expiresAt: null, issuer: null, error: "No public certificate was found for this site." };
     }
     const ok = best.date.getTime() > Date.now();
     return { ok, expiresAt: best.date.toISOString(), issuer: best.issuer };

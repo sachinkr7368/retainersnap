@@ -5,11 +5,12 @@ import { inputClass } from "@/components/styles";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { userMessage } from "@/lib/user-message";
 import { cn } from "@/lib/utils";
 
 function messageOf<T extends FieldValues>(form: UseFormReturn<T>, name: FieldPath<T>) {
   const message = form.formState.errors[name]?.message;
-  return typeof message === "string" ? message : "";
+  return typeof message === "string" ? userMessage(message, "Check this field.") : "";
 }
 
 export function TextField<T extends FieldValues>({

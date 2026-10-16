@@ -58,10 +58,10 @@ export function SiteFooter() {
 
 export async function MarketingFrame({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className="site-frame flex min-h-dvh flex-col">
       <SiteHeader />
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
       <SiteFooter />
-    </>
+    </div>
   );
 }

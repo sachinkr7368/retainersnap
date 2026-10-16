@@ -14,8 +14,8 @@ export const metadata: Metadata = { title: "Billing" };
 const messages: Record<string, string> = {
   owner: "Only the workspace owner can change billing.",
   nosub: "There is no customer record yet. Subscribe once, then the billing portal opens.",
-  return: "If checkout finished, the plan updates when the webhook arrives. Refresh in a moment.",
-  success: "Checkout returned. The plan updates when the webhook arrives.",
+  return: "If checkout finished, the plan updates in a moment. Refresh this page.",
+  success: "Payment received. The plan updates in a moment.",
   cancel: "Checkout was cancelled. The current plan is unchanged.",
 };
 

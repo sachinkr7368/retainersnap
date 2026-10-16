@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   if (missingCoreEnv().length > 0) {
-    return apiError("not_configured", "Supabase is not configured.", 503);
+    return apiError("not_configured", "Billing is not available right now.", 503);
   }
   const member = await getMember();
   if (!member) return apiError("unauthenticated", "Sign in to subscribe.", 401);
@@ -24,14 +24,14 @@ export async function POST(request: Request) {
   try {
     json = await request.json();
   } catch {
-    return apiError("invalid_json", "Send plan and interval as JSON.", 400);
+    return apiError("invalid_json", "Choose a plan and a billing interval.", 400);
   }
   const parsed = checkoutSchema.safeParse(json);
   if (!parsed.success) return apiError("invalid_body", "Choose a plan and a billing interval.", 400);
 
   const env = readEnv();
   if (parsed.data.interval === "year" && !annualConfigured(env)) {
-    return apiError("yearly_unconfigured", "Yearly prices are not configured. Add the yearly product ids, or choose monthly.", 400);
+    return apiError("yearly_unconfigured", "Yearly billing is not available yet. Choose monthly.", 400);
   }
 
   try {

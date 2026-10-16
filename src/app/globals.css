@@ -42,6 +42,11 @@ select {
 }
 
 @media print {
+  .site-frame {
+    display: block !important;
+    min-height: 0 !important;
+  }
+
   .no-print {
     display: none !important;
   }

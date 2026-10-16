@@ -6,7 +6,7 @@ export default function AppError({ reset }: { error: Error & { digest?: string }
   return (
     <div className="max-w-lg">
       <h1 className="font-serif text-4xl">This page failed</h1>
-      <p className="mt-3 text-muted">The workspace data did not load. Try again, or check the Supabase keys.</p>
+      <p className="mt-3 text-muted">This page did not load. Try again in a moment.</p>
       <button type="button" onClick={() => reset()} className={`${buttonClass} mt-6`}>
         Try again
       </button>

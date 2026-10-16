@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
 import { buttonClass, inputClass } from "@/components/styles";
+import { Alert } from "@/components/ui/alert";
 import { readApi } from "@/lib/api-client";
 import { formatDate, formatDurationMs } from "@/lib/format";
 import type { HealthResponse } from "@/lib/health-types";
@@ -55,11 +56,7 @@ export function HealthTool({
           {mutation.isPending ? "Checking…" : "Check this site"}
         </button>
       </form>
-      {error ? (
-        <p role="alert" className="mt-3 text-sm text-clay">
-          {error}
-        </p>
-      ) : null}
+      {error ? <Alert className="mt-3">{error}</Alert> : null}
       {report ? (
         <div className="mt-6 grid gap-3">
           <div className="grid gap-3 sm:grid-cols-2">

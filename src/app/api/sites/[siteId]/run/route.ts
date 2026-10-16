@@ -14,7 +14,7 @@ const paramsSchema = z.object({ siteId: z.string().uuid() });
 
 export async function POST(_request: Request, context: { params: Promise<{ siteId: string }> }) {
   if (missingCoreEnv().length > 0) {
-    return apiError("not_configured", "Supabase is not configured.", 503);
+    return apiError("not_configured", "Checks are not available right now.", 503);
   }
   const member = await getMember();
   if (!member) return apiError("unauthenticated", "Sign in to run checks.", 401);
@@ -37,6 +37,6 @@ export async function POST(_request: Request, context: { params: Promise<{ siteI
     const processed = await processBatch({ limit: 3, siteId: parsed.data.siteId });
     return apiOk({ processed });
   } catch {
-    return apiError("checks_failed", "Checks failed.", 500);
+    return apiError("checks_failed", "The checks did not finish. Try again.", 500);
   }
 }

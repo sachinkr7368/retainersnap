@@ -41,7 +41,7 @@ export async function addSite(_state: ActionState, formData: FormData): Promise<
   if (error) return fail(friendlyDbError(error.message, "Could not add the site."));
   const row = Array.isArray(data) ? data[0] : data;
   const siteId = row && typeof row === "object" && "id" in row ? String(row.id) : "";
-  if (!siteId) return fail("The site was saved but the id did not come back.");
+  if (!siteId) return fail("The site was saved, but it could not be opened. Refresh the client list.");
   try {
     await enqueueSiteNow(siteId);
   } catch {

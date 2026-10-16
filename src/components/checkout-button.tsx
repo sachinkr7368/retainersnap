@@ -2,6 +2,7 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { buttonClass, buttonSecondary } from "@/components/styles";
+import { Alert } from "@/components/ui/alert";
 import { readApi } from "@/lib/api-client";
 import type { BillingInterval, PaidPlan } from "@/lib/types";
 
@@ -50,7 +51,7 @@ export function CheckoutButton({
       >
         {mutation.isPending ? "Redirecting…" : label}
       </button>
-      {error ? <p className="mt-2 text-sm text-clay">{error}</p> : null}
+      {error ? <Alert className="mt-2">{error}</Alert> : null}
     </div>
   );
 }

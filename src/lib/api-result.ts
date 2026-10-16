@@ -1,3 +1,5 @@
+import { userMessage } from "@/lib/user-message";
+
 export type ApiErrorBody = {
   ok: false;
   error: { code: string; message: string };
@@ -31,10 +33,6 @@ export function isApiFailure(value: unknown): value is ApiErrorBody {
   );
 }
 
-const SECRET = /sk_live|sk_test|whsec_|service_role|eyJ[a-zA-Z0-9_-]{10,}|postgres:\/\//i;
-
 export function publicMessage(error: unknown, fallback: string): string {
-  const message = error instanceof Error ? error.message.trim() : "";
-  if (!message || message.length > 240 || SECRET.test(message)) return fallback;
-  return message;
+  return userMessage(error, fallback);
 }
