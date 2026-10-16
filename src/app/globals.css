@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+  --color-paper: #f4f0e6;
+  --color-ink: #1c1915;
+  --color-moss: #1f6b45;
+  --color-moss-deep: #164e33;
+  --color-clay: #c4512c;
+  --color-line: #e4dccb;
+  --color-card: #fffdf8;
+  --color-muted: #6e675e;
+  --color-background: #f4f0e6;
+  --color-foreground: #1c1915;
+  --color-primary: #1c1915;
+  --color-primary-foreground: #f4f0e6;
+  --color-secondary: #fffdf8;
+  --color-destructive: #c4512c;
+  --color-border: #e4dccb;
+  --color-ring: #1f6b45;
+  --radius: 0.75rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+input:not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="color"]),
+select {
+  min-height: 2.75rem;
+}
+
+::selection {
+  background: #d7eadf;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .report-sheet {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}

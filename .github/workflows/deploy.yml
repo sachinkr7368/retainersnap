@@ -1,0 +1,71 @@
+name: Deploy
+
+# Optional Cloudflare deploy. The linked Vercel project deploys from git.
+# This workflow stays manual. The same variable names used locally are stored
+# as GitHub Actions secrets. Copying it to production is adding the live values.
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.14.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Write the production env file
+        env:
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+          PAGESPEED_API_KEY: ${{ secrets.PAGESPEED_API_KEY }}
+          PAYMENT_PROVIDER: ${{ secrets.PAYMENT_PROVIDER }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          STRIPE_PRICE_SOLO_MONTHLY: ${{ secrets.STRIPE_PRICE_SOLO_MONTHLY }}
+          STRIPE_PRICE_SOLO_YEARLY: ${{ secrets.STRIPE_PRICE_SOLO_YEARLY }}
+          STRIPE_PRICE_STUDIO_MONTHLY: ${{ secrets.STRIPE_PRICE_STUDIO_MONTHLY }}
+          STRIPE_PRICE_STUDIO_YEARLY: ${{ secrets.STRIPE_PRICE_STUDIO_YEARLY }}
+          DODO_PAYMENTS_API_KEY: ${{ secrets.DODO_PAYMENTS_API_KEY }}
+          DODO_PAYMENTS_WEBHOOK_KEY: ${{ secrets.DODO_PAYMENTS_WEBHOOK_KEY }}
+          DODO_PAYMENTS_ENVIRONMENT: ${{ secrets.DODO_PAYMENTS_ENVIRONMENT }}
+          DODO_PRODUCT_SOLO_MONTHLY: ${{ secrets.DODO_PRODUCT_SOLO_MONTHLY }}
+          DODO_PRODUCT_SOLO_YEARLY: ${{ secrets.DODO_PRODUCT_SOLO_YEARLY }}
+          DODO_PRODUCT_STUDIO_MONTHLY: ${{ secrets.DODO_PRODUCT_STUDIO_MONTHLY }}
+          DODO_PRODUCT_STUDIO_YEARLY: ${{ secrets.DODO_PRODUCT_STUDIO_YEARLY }}
+        run: bash scripts/write-env.sh .env.production
+
+      - name: Deploy the app worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm deploy
+
+      - name: Push runtime secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: bash scripts/push-secrets.sh
+
+      - name: Deploy the cron worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm deploy:cron
