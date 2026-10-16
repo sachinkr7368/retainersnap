@@ -24,6 +24,26 @@ test("a visitor can read the offer, check a URL shape, and reach signup", async 
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page.locator("p[role='alert']")).toContainText("Sign-in is not available yet");
   await expect(page.locator("p[role='alert']")).not.toContainText("NEXT_PUBLIC_");
+
+  await page.goto("/");
+  await page.locator("#health-url").fill("https://www.glomo.one/");
+  await page.getByRole("button", { name: "Check this site" }).click();
+  await expect(page.locator("p[role='alert']")).toContainText("not available right now");
+  await expect(page.locator("p[role='alert']")).not.toContainText("PAGESPEED");
+
+  await page.goto("/forgot-password");
+  await page.getByLabel("Email").fill("ada@example.com");
+  await page.getByRole("button", { name: "Send reset link" }).click();
+  await expect(page.locator("p[role='alert']")).toContainText("Sign-in is not available yet");
+  await expect(page).not.toHaveURL(/email=/);
+});
+
+test("marketing pages include a script nonce", async ({ page }) => {
+  for (const path of ["/", "/pricing", "/demo", "/forgot-password"]) {
+    await page.goto(path);
+    const trusted = await page.evaluate(() => [...document.scripts].some((script) => (script.nonce ?? "").length > 0));
+    expect(trusted, path).toBe(true);
+  }
 });
 
 test("the app explains which keys are missing", async ({ page }, info) => {

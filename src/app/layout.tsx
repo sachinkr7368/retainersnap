@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Outfit } from "next/font/google";
+import { headers } from "next/headers";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
@@ -21,7 +22,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const dynamic = "force-dynamic";
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Static HTML is built before a request exists, so it has no nonce. The CSP
+  // then blocks every script, and forms on those pages never run.
+  await headers();
   return (
     <html lang="en" className={`${outfit.variable} ${fraunces.variable}`}>
       <body className="min-h-screen antialiased">
