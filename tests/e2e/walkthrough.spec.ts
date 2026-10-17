@@ -20,7 +20,7 @@ test("a visitor can read the offer, check a URL shape, and reach signup", async 
 
   await page.goto("/login");
   await page.getByLabel("Email").first().fill("ada@example.com");
-  await page.getByLabel("Password").fill("correcthorse");
+  await page.getByRole("textbox", { name: "Password" }).fill("correcthorse");
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page.locator("p[role='alert']")).toContainText("Sign-in is not available yet");
   await expect(page.locator("p[role='alert']")).not.toContainText("NEXT_PUBLIC_");
