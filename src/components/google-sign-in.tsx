@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { buttonSecondary } from "@/components/styles";
-import { createBrowserSupabase } from "@/lib/supabase/browser";
 import { safeNext } from "@/lib/urls";
 import { userMessage } from "@/lib/user-message";
 
@@ -24,22 +23,22 @@ export function GoogleSignInButton({ next }: { next: string }) {
   async function signIn() {
     setError("");
     setPending(true);
-    const supabase = createBrowserSupabase();
-    if (!supabase) {
-      setError("Sign-in is not available yet.");
+    const destination = safeNext(next);
+    const response = await fetch("/api/auth/google", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ next: destination, origin: window.location.origin }),
+    });
+    const body = (await response.json().catch(() => null)) as
+      | { ok: true; data: { url: string } }
+      | { ok: false; error?: { message?: string } }
+      | null;
+    if (!body?.ok || !body.data?.url.startsWith("https://accounts.google.com/")) {
+      setError(body && !body.ok ? userMessage(body.error?.message, "Google sign-in is not available yet. Use email and password.") : "Google sign-in is not available yet. Use email and password.");
       setPending(false);
       return;
     }
-    const destination = safeNext(next);
-    const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(destination)}`;
-    const { error: authError } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo, queryParams: { prompt: "select_account" } },
-    });
-    if (authError) {
-      setError(userMessage(authError.message, "Google sign-in is not available yet. Use email and password."));
-      setPending(false);
-    }
+    window.location.assign(body.data.url);
   }
 
   return (
