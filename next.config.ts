@@ -3,6 +3,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_PAYMENT_PROVIDER: process.env.PAYMENT_PROVIDER === "stripe" ? "stripe" : "dodo",
+  },
   reactStrictMode: true,
   poweredByHeader: false,
   devIndicators: false,

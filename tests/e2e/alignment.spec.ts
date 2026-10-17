@@ -19,23 +19,25 @@ async function open(page: Page, route: string) {
 }
 
 test("the site footer sits at the bottom of a short page", async ({ page }) => {
-  await page.goto("/health");
-  await expect(page.getByRole("heading", { name: "Site health report" })).toBeVisible();
-  const placed = await page.evaluate(() => {
-    const footer = document.querySelector("footer");
-    if (!footer) return null;
-    const rect = footer.getBoundingClientRect();
-    const footerBottom = Math.round(rect.bottom + window.scrollY);
-    return {
-      footerBottom,
-      documentHeight: document.documentElement.scrollHeight,
-      viewHeight: window.innerHeight,
-    };
-  });
-  expect(placed).not.toBeNull();
-  expect(Math.abs(placed!.footerBottom - placed!.documentHeight)).toBeLessThanOrEqual(2);
-  if (placed!.documentHeight <= placed!.viewHeight + 2) {
-    expect(placed!.footerBottom).toBeGreaterThanOrEqual(placed!.viewHeight - 2);
+  for (const path of ["/health", "/setup", "/login", "/this-page-is-missing"]) {
+    await page.goto(path);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    const placed = await page.evaluate(() => {
+      const footer = document.querySelector(".site-frame > footer");
+      if (!footer) return null;
+      const rect = footer.getBoundingClientRect();
+      const footerBottom = Math.round(rect.bottom + window.scrollY);
+      return {
+        footerBottom,
+        documentHeight: document.documentElement.scrollHeight,
+        viewHeight: window.innerHeight,
+      };
+    });
+    expect(placed, path).not.toBeNull();
+    expect(Math.abs(placed!.footerBottom - placed!.documentHeight), path).toBeLessThanOrEqual(2);
+    if (placed!.documentHeight <= placed!.viewHeight + 2) {
+      expect(placed!.footerBottom, path).toBeGreaterThanOrEqual(placed!.viewHeight - 2);
+    }
   }
 });
 
