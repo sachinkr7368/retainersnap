@@ -37,6 +37,9 @@ function knownMessage(message: string): string | null {
   if (lower.includes("signups not allowed") || lower.includes("signup is disabled")) {
     return "New accounts are paused right now.";
   }
+  if (lower.includes("provider is not enabled") || lower.includes("unsupported provider")) {
+    return "Google sign-in is not available yet. Use email and password.";
+  }
   if (lower.includes("next_public_supabase") || lower.includes("anon_key") || lower.includes("auth is not configured")) {
     return "Sign-in is not available yet.";
   }

@@ -51,8 +51,41 @@ async function queryCrt(query: string): Promise<CrtRow[]> {
   return Array.isArray(parsed) ? parsed : [parsed];
 }
 
+async function liveCertificate(hostname: string): Promise<SslResult | null> {
+  try {
+    const { connect } = await import("node:tls");
+    return await new Promise((resolve) => {
+      const socket = connect({ host: hostname, port: 443, servername: hostname, timeout: 10_000 }, () => {
+        const cert = socket.getPeerCertificate();
+        socket.end();
+        const expires = cert?.valid_to ? new Date(cert.valid_to) : null;
+        if (!expires || Number.isNaN(expires.getTime())) {
+          resolve(null);
+          return;
+        }
+        const issuer = cert.issuer?.O || cert.issuer?.CN || null;
+        resolve({
+          ok: expires.getTime() > Date.now(),
+          expiresAt: expires.toISOString(),
+          issuer: typeof issuer === "string" ? issuer : null,
+        });
+      });
+      const giveUp = () => {
+        socket.destroy();
+        resolve(null);
+      };
+      socket.on("error", giveUp);
+      socket.on("timeout", giveUp);
+    });
+  } catch {
+    return null;
+  }
+}
+
 export async function runSsl(hostname: string): Promise<SslResult> {
   const host = hostname.toLowerCase();
+  const live = await liveCertificate(host);
+  if (live) return live;
   try {
     let rows = await queryCrt(host);
     const matched = rows.filter((row) => hostMatches(row, host));

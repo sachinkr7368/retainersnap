@@ -47,7 +47,7 @@ export class DodoProvider implements PaymentProvider {
     return { url: session.checkout_url };
   }
 
-  async createPortal(input: { providerCustomerId: string }): Promise<{ url: string }> {
+  async createPortal(input: { providerCustomerId: string; flow?: "payment_method" }): Promise<{ url: string }> {
     const env = readEnv();
     const session = await client().customers.customerPortal.create(input.providerCustomerId, {
       return_url: `${env.appUrl}/app/billing`,

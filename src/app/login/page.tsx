@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LoginPasswordForm, MagicLinkForm } from "@/components/forms";
+import { GoogleSignInButton } from "@/components/google-sign-in";
 import { MarketingFrame } from "@/components/marketing";
 import { safeNext } from "@/lib/urls";
 
@@ -31,6 +32,8 @@ export default async function LoginPage({
         </div>
         {banner ? <p className="rounded-lg border border-line bg-card px-3 py-2 text-sm text-clay">{banner}</p> : null}
         <div className="grid gap-3">
+          <GoogleSignInButton next={next} />
+          <p className="text-center text-xs tracking-[0.16em] text-muted uppercase">or</p>
           <LoginPasswordForm next={next} />
           <Link href="/forgot-password" className="text-sm text-muted underline">
             Forgot password

@@ -88,6 +88,9 @@ export function ReportDocument({ report }: { report: ReportView }) {
 
       <section className="mt-8" style={{ color: report.color }}>
         <h2 className="font-serif text-2xl text-ink">PageSpeed, mobile</h2>
+        {report.performance == null && report.seo == null && report.accessibility == null && report.bestPractices == null ? (
+          <p className="mt-2 text-sm text-ink">PageSpeed has not run for this site yet.</p>
+        ) : null}
         <div className="mt-4 grid gap-4">
           <Score label="Performance" value={report.performance} />
           <Score label="SEO" value={report.seo} />

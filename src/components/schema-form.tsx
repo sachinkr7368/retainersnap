@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionState, useEffect } from "react";
+import { startTransition, useActionState, useEffect } from "react";
 import { useForm, type DefaultValues, type FieldValues, type Path, type Resolver, type UseFormReturn } from "react-hook-form";
 import type { ZodType } from "zod";
 import { Alert } from "@/components/ui/alert";
@@ -51,7 +51,9 @@ export function SchemaForm<T extends FieldValues>({
       if (value == null) continue;
       data.set(key, typeof value === "string" ? value : String(value));
     }
-    formAction(data);
+    startTransition(() => {
+      formAction(data);
+    });
   }
 
   return (

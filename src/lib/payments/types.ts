@@ -25,7 +25,7 @@ export type BillingEvent = {
 export interface PaymentProvider {
   name: "dodo" | "stripe";
   createCheckout(input: CheckoutInput): Promise<{ url: string }>;
-  createPortal(input: { providerCustomerId: string }): Promise<{ url: string }>;
+  createPortal(input: { providerCustomerId: string; flow?: "payment_method" }): Promise<{ url: string }>;
   cancelAtPeriodEnd(providerSubscriptionId: string): Promise<void>;
   verifyAndParseWebhook(rawBody: string, headers: Headers): Promise<BillingEvent>;
 }

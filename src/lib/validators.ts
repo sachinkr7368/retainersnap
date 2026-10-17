@@ -12,6 +12,22 @@ export const checkoutSchema = z.object({
 export const emailSchema = z.string().trim().email("Enter a valid email address.").max(200);
 export const passwordSchema = z.string().min(8, "Use at least 8 characters.").max(200);
 
+export const passwordRules = [
+  { id: "length", label: "At least 8 characters", test: (value: string) => value.length >= 8 && value.length <= 200 },
+  { id: "lower", label: "One lowercase letter", test: (value: string) => /[a-z]/.test(value) },
+  { id: "upper", label: "One uppercase letter", test: (value: string) => /[A-Z]/.test(value) },
+  { id: "number", label: "One number", test: (value: string) => /\d/.test(value) },
+] as const;
+
+export const newPasswordSchema = z
+  .string()
+  .max(200, "Use 200 characters or fewer.")
+  .superRefine((value, ctx) => {
+    for (const rule of passwordRules) {
+      if (!rule.test(value)) ctx.addIssue({ code: "custom", message: `${rule.label}.` });
+    }
+  });
+
 export const loginSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
@@ -19,6 +35,7 @@ export const loginSchema = z.object({
 
 export const signupSchema = loginSchema.extend({
   studio_name: z.string().trim().min(2, "Studio name is required.").max(80),
+  password: newPasswordSchema,
 });
 
 export const emailFormSchema = z.object({
@@ -26,7 +43,7 @@ export const emailFormSchema = z.object({
 });
 
 export const passwordFormSchema = z.object({
-  password: passwordSchema,
+  password: newPasswordSchema,
 });
 
 export const clientSchema = z.object({

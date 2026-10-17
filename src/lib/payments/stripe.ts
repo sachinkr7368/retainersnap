@@ -55,7 +55,7 @@ function fromSubscription(eventId: string, subscription: Stripe.Subscription, en
     providerCustomerId: customerId(subscription.customer),
     providerSubscriptionId: subscription.id,
     currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
-    cancelAtPeriodEnd: subscription.cancel_at_period_end,
+    cancelAtPeriodEnd: subscription.cancel_at_period_end || (subscription.cancel_at != null && subscription.cancel_at * 1000 > Date.now()),
   };
 }
 
@@ -88,11 +88,12 @@ export class StripeProvider implements PaymentProvider {
     return { url: session.url };
   }
 
-  async createPortal(input: { providerCustomerId: string }): Promise<{ url: string }> {
+  async createPortal(input: { providerCustomerId: string; flow?: "payment_method" }): Promise<{ url: string }> {
     const env = readEnv();
     const session = await client().billingPortal.sessions.create({
       customer: input.providerCustomerId,
       return_url: `${env.appUrl}/app/billing`,
+      ...(input.flow === "payment_method" ? { flow_data: { type: "payment_method_update" } } : {}),
     });
     return { url: session.url };
   }

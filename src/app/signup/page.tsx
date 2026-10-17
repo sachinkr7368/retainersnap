@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SignupForm } from "@/components/forms";
+import { GoogleSignInButton } from "@/components/google-sign-in";
 import { MarketingFrame } from "@/components/marketing";
 import { safeNext } from "@/lib/urls";
 
@@ -19,7 +20,9 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
             Sign in
           </Link>
         </p>
-        <div className="mt-8">
+        <div className="mt-8 grid gap-3">
+          <GoogleSignInButton next={next} />
+          <p className="text-center text-xs tracking-[0.16em] text-muted uppercase">or</p>
           <SignupForm next={next} />
         </div>
       </section>

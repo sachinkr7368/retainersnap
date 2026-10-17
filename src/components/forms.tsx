@@ -1,6 +1,6 @@
 "use client";
 
-import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
+import { PasswordField, SelectField, TextAreaField, TextField } from "@/components/form-fields";
 import { SchemaForm } from "@/components/schema-form";
 import { buttonClass } from "@/components/styles";
 import { addClient } from "@/lib/actions/clients";
@@ -28,7 +28,7 @@ export function LoginPasswordForm({ next }: { next: string }) {
       {(form) => (
         <>
           <TextField form={form} name="email" label="Email" type="email" autoComplete="email" />
-          <TextField form={form} name="password" label="Password" type="password" autoComplete="current-password" />
+          <PasswordField form={form} name="password" label="Password" autoComplete="current-password" />
         </>
       )}
     </SchemaForm>
@@ -66,7 +66,7 @@ export function SignupForm({ next }: { next: string }) {
         <>
           <TextField form={form} name="studio_name" label="Studio name" autoComplete="organization" placeholder="North Studio" />
           <TextField form={form} name="email" label="Email" type="email" autoComplete="email" />
-          <TextField form={form} name="password" label="Password" type="password" autoComplete="new-password" />
+          <PasswordField form={form} name="password" label="Password" autoComplete="new-password" showRules />
         </>
       )}
     </SchemaForm>
@@ -181,7 +181,7 @@ export function BrandForm({
 export function PasswordForm() {
   return (
     <SchemaForm schema={passwordFormSchema} action={updatePassword} defaultValues={{ password: "" }} submit="Update password">
-      {(form) => <TextField form={form} name="password" label="New password" type="password" autoComplete="new-password" />}
+      {(form) => <PasswordField form={form} name="password" label="New password" autoComplete="new-password" showRules />}
     </SchemaForm>
   );
 }

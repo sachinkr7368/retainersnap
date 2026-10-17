@@ -38,9 +38,14 @@ export default async function BillingPage({
         Current plan: {billing.limits.name}.
         {billing.trialDaysLeft != null ? ` Studio trial, ${billing.trialDaysLeft} days left.` : ""}
         {subscription
-          ? ` ${subscription.provider} · ${subscription.status}${subscription.cancel_at_period_end ? " · cancels at period end" : ""}${subscription.current_period_end ? ` · through ${formatDate(subscription.current_period_end)}` : ""}.`
+          ? ` ${subscription.provider} · ${subscription.status}${subscription.current_period_end ? ` · through ${formatDate(subscription.current_period_end)}` : ""}.`
           : ""}
       </p>
+      {subscription?.cancel_at_period_end ? (
+        <p className="mt-4 rounded-xl border border-clay/40 bg-card px-4 py-3 text-sm">
+          {billing.limits.name} cancels on {formatDate(subscription.current_period_end)}. You keep this plan until that date.
+        </p>
+      ) : null}
       {notice ? <p className="mt-4 rounded-xl border border-line bg-card px-4 py-3 text-sm">{notice}</p> : null}
 
       <div className="mt-8">
@@ -55,6 +60,8 @@ export default async function BillingPage({
                 yearlyLabel="$190 yearly"
                 owner={role === "owner"}
                 current={billing.plan === "solo"}
+                currentInterval={subscription?.plan === "solo" ? subscription.interval : null}
+                cancelOn={subscription?.plan === "solo" && subscription.cancel_at_period_end ? formatDate(subscription.current_period_end) : ""}
               />
             ),
             studio: (
@@ -65,6 +72,8 @@ export default async function BillingPage({
                 yearlyLabel="$490 yearly"
                 owner={role === "owner"}
                 current={billing.plan === "studio"}
+                currentInterval={subscription?.plan === "studio" ? subscription.interval : null}
+                cancelOn={subscription?.plan === "studio" && subscription.cancel_at_period_end ? formatDate(subscription.current_period_end) : ""}
               />
             ),
           }}
@@ -81,14 +90,16 @@ export default async function BillingPage({
         <div className="mt-8 flex flex-wrap items-start gap-6">
           <form action={openBillingPortal}>
             <SubmitButton className={buttonSecondary} pendingLabel="Opening…">
-              Open billing portal
+              Update card
             </SubmitButton>
           </form>
-          <div className="max-w-sm">
-            <ActionForm action={cancelSubscription} submit="Cancel at period end" pendingLabel="Scheduling…">
-              <p className="text-sm text-muted">Access stays until the current period ends. The webhook confirms the status.</p>
-            </ActionForm>
-          </div>
+          {subscription.cancel_at_period_end ? null : (
+            <div className="max-w-sm">
+              <ActionForm action={cancelSubscription} submit="Cancel at period end" pendingLabel="Scheduling…">
+                <p className="text-sm text-muted">Access stays until {formatDate(subscription.current_period_end)}. The date stays on this page after you reload.</p>
+              </ActionForm>
+            </div>
+          )}
         </div>
       ) : null}
       {role !== "owner" ? <p className="mt-6 text-sm text-muted">Ask the workspace owner to change the plan.</p> : null}

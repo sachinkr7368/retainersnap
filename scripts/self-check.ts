@@ -8,7 +8,7 @@ import { isPreviewPath, previewEnabled } from "../src/lib/preview";
 import { resolvePlan } from "../src/lib/plans";
 import { buildSummary } from "../src/lib/summary";
 import { isPrivateHost, parsePublicUrl, registrableDomain } from "../src/lib/urls";
-import { loginSchema } from "../src/lib/validators";
+import { loginSchema, passwordFormSchema, signupSchema } from "../src/lib/validators";
 
 assert.equal(isPrivateHost("localhost"), true);
 assert.equal(isPrivateHost("10.1.1.1"), true);
@@ -70,6 +70,30 @@ const summary = buildSummary({
 });
 assert.match(summary, /client\.framer\.app/);
 assert.match(summary, /99\.5%/);
+assert.match(
+  buildSummary({
+    hostname: "x.com",
+    periodLabel: "October 2026",
+    uptimeRatio: 1,
+    sslExpiresAt: "2014-03-05T00:00:00Z",
+    domainExpiresAt: null,
+    brokenCount: 0,
+    performance: null,
+  }),
+  /certificate expired on/,
+);
+assert.match(
+  buildSummary({
+    hostname: "x.com",
+    periodLabel: "October 2026",
+    uptimeRatio: 1,
+    sslExpiresAt: "2026-12-27T20:09:53Z",
+    domainExpiresAt: null,
+    brokenCount: 0,
+    performance: null,
+  }),
+  /SSL is valid through/,
+);
 
 assert.equal(previewEnabled(), false);
 assert.equal(isPreviewPath("/preview"), true);
@@ -77,6 +101,14 @@ assert.equal(isPreviewPath("/preview/billing"), true);
 assert.equal(isPreviewPath("/pricing"), false);
 assert.equal(previewShots.length >= 10, true);
 assert.equal(loginSchema.safeParse({ email: "ada@example.com", password: "short" }).success, false);
+assert.equal(loginSchema.safeParse({ email: "ada@example.com", password: "correcthorse" }).success, true);
+assert.equal(signupSchema.safeParse({ email: "ada@example.com", password: "correcthorse", studio_name: "North Studio" }).success, false);
+assert.equal(signupSchema.safeParse({ email: "ada@example.com", password: "Correct1horse", studio_name: "North Studio" }).success, true);
+assert.equal(passwordFormSchema.safeParse({ password: "Correct1horse" }).success, true);
+assert.equal(
+  userMessage("Unsupported provider: provider is not enabled", "fallback"),
+  "Google sign-in is not available yet. Use email and password.",
+);
 const loginError = loginSchema.safeParse({ email: "not-an-email", password: "x" });
 assert.equal(loginError.success, false);
 if (!loginError.success) {

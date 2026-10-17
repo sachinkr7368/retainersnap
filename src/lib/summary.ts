@@ -18,7 +18,9 @@ export function buildSummary(input: {
     );
   }
   if (input.sslExpiresAt) {
-    sentences.push(`SSL is valid through ${formatDate(input.sslExpiresAt)}.`);
+    const when = formatDate(input.sslExpiresAt);
+    const expired = new Date(input.sslExpiresAt).getTime() < Date.now();
+    sentences.push(expired ? `The certificate expired on ${when}.` : `SSL is valid through ${when}.`);
   } else {
     sentences.push("SSL expiry could not be confirmed from public certificate logs.");
   }
