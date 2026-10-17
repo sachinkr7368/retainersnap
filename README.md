@@ -6,7 +6,7 @@ Monthly branded client reports for freelancers and small studios who maintain Fr
 
 | Host | Address | What it is |
 | --- | --- | --- |
-| Staging | [retainersnap-git-staging-sachinkr-projects.vercel.app](https://retainersnap-git-staging-sachinkr-projects.vercel.app) | The host to explore end to end. Sign up, add a site, run checks, open a report, and start checkout. |
+| Staging | [retainersnap-staging.vercel.app](https://retainersnap-staging.vercel.app) | The host to explore end to end. Sign up, add a site, run checks, open a report, and start checkout. |
 | Production | [retainersnap.vercel.app](https://retainersnap.vercel.app) | The public production host. Live billing is a separate setup in [docs/PRODUCTION.md](docs/PRODUCTION.md). |
 | Local | [localhost:3000](http://localhost:3000) | Your own checkout of this repo, in test mode. |
 
@@ -14,11 +14,11 @@ On staging, a new account gets 14 days of Studio with no card. Checkout opens St
 
 Useful pages on staging:
 
-- [/](https://retainersnap-git-staging-sachinkr-projects.vercel.app/) is the marketing page and the free site check
-- [/pricing](https://retainersnap-git-staging-sachinkr-projects.vercel.app/pricing)
-- [/signup](https://retainersnap-git-staging-sachinkr-projects.vercel.app/signup)
-- [/login](https://retainersnap-git-staging-sachinkr-projects.vercel.app/login)
-- [/demo](https://retainersnap-git-staging-sachinkr-projects.vercel.app/demo) is a sample report
+- [/](https://retainersnap-staging.vercel.app/) is the marketing page and the free site check
+- [/pricing](https://retainersnap-staging.vercel.app/pricing)
+- [/signup](https://retainersnap-staging.vercel.app/signup)
+- [/login](https://retainersnap-staging.vercel.app/login)
+- [/demo](https://retainersnap-staging.vercel.app/demo) is a sample report
 
 ## Stack
 

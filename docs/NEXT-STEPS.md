@@ -2,7 +2,7 @@
 
 Test mode is wired for local (`http://localhost:3000`) and for the Vercel staging host:
 
-https://retainersnap-git-staging-sachinkr-projects.vercel.app
+https://retainersnap-staging.vercel.app
 
 That host is the Preview deployment of the git branch `staging`. Hobby has no custom environment, so this preview is the staging site.
 
