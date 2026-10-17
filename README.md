@@ -58,7 +58,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 `pnpm test:e2e` starts the app with `ALLOW_PREVIEW=1` and screenshots the public pages and the mock-data gallery. Leave `ALLOW_PREVIEW` unset on Vercel. Production and staging both 404 `/preview`.
 
-GitHub Actions (`.github/workflows/ci.yml`) runs typecheck, unit checks, and Playwright on pushes to `main` and on pull requests.
+GitHub Actions (`.github/workflows/ci.yml`) runs typecheck, unit checks, and Playwright on pushes to `main` and on pull requests. `.github/workflows/deploy.yml` is the optional Cloudflare deploy, started by hand. The customer-facing deploy is the linked Vercel project.
 
 ## Plans
 
